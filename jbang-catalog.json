@@ -1,0 +1,10 @@
+{
+  "catalogs": {},
+  "aliases": {
+    "ghprcomment": {
+      "script-ref": "ghprcomment.java",
+      "java-agents": []
+    }
+  },
+  "templates": {}
+}

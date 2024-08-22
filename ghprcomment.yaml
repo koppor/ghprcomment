@@ -1,0 +1,19 @@
+# Example YAML file for commenting
+- jobName: job1
+  message: | 
+    Job 1 failed
+
+    Please check your IDE configuration for proper import ordering
+- jobName: job3
+  message: |
+    Job 3 failed
+    
+    Please run OpenRewrite.
+- jobName: job2
+  message: |
+    Job 2 failed
+    
+    Please run "[Checkstyle](https://checkstyle.sourceforge.io/)" in your IDE and check for errors.
+
+- jobName: check
+  message: Please check the output of the "Check" workflow
