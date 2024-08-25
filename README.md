@@ -1,6 +1,7 @@
 # GitHub Comment on PR
 
 Comments on a pull request after a job failure with configured hints (based on the job).
+Proudly made using [JBang](https://www.jbang.dev/).
 
 ## How to use
 
