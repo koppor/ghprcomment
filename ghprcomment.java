@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.Unchecked;
 import org.kohsuke.github.GHPullRequest;
@@ -51,6 +52,12 @@ public class ghprcomment implements Callable<Integer> {
 
     private final String CONFIG_FILE_NAME = "ghprcomment";
 
+    private final List<Path> SEARCH_PATHS = List.of(Path.of("."), Path.of(".github"));
+
+    private final List<Path> CONFIG_PATHS = SEARCH_PATHS.stream()
+                                                        .flatMap(path -> Stream.of(path.resolve(CONFIG_FILE_NAME + ".yaml"), path.resolve(CONFIG_FILE_NAME + ".yml")))
+                                                        .toList();
+
     @Option(names = { "-r", "--repository" }, description = "The GitHub repository in the form owner/repository. E.g., JabRef/jabref", required = true)
     private String repository;
 
@@ -70,13 +77,12 @@ public class ghprcomment implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        Path yamlConfigFile = Path.of(CONFIG_FILE_NAME + ".yaml");
-        if (!Files.exists(yamlConfigFile)) {
-            yamlConfigFile = Path.of(CONFIG_FILE_NAME + ".yml");
-            if (!Files.exists(yamlConfigFile)) {
-                Logger.error("{} not found", CONFIG_FILE_NAME);
-                return GH_PR_COMMENT_YAML_NOT_FOUND;
-            }
+        Optional<Path> configPath = CONFIG_PATHS.stream()
+                                           .filter(Files::exists)
+                                           .findFirst();
+        if (configPath.isEmpty()) {
+            Logger.error("{} not found. Searched at {}.", CONFIG_FILE_NAME, CONFIG_PATHS);
+            return GH_PR_COMMENT_YAML_NOT_FOUND;
         }
 
         Logger.info("Connecting to {}...", repository);
@@ -95,7 +101,7 @@ public class ghprcomment implements Callable<Integer> {
                                                 .map(GHWorkflowJob::getName)
                                                 .collect(Collectors.toSet());
             Logger.debug("Failed jobs: {}", failedJobs);
-            Optional<FailureComment> commentToPost = getFailureComments(yamlConfigFile).stream()
+            Optional<FailureComment> commentToPost = getFailureComments(configPath.get()).stream()
                                                                          .filter(fc -> failedJobs.contains(fc.jobName))
                                                                          .findFirst();
             Logger.debug("Found comment: {}", commentToPost);
