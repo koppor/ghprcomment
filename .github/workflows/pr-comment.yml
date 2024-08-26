@@ -1,4 +1,4 @@
-# Description: This workflow is triggered when the "CHeck" workflow completes.
+# Description: This workflow is triggered when the "Check" workflow completes.
 # Since this pull request has write permissions on the target repo, we should **NOT** execute any untrusted code.
 # https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
 # Based on https://github.com/spring-projects/spring-security/pull/15477/files
