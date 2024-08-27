@@ -5,11 +5,13 @@ Proudly made using [JBang](https://www.jbang.dev/).
 
 ## How to use
 
-Customize `ghprcomment.yml`.
-See [ghprcomment.yml](ghprcomment.yml) for an example.
+### Define the messages to be posted
 
+The `ghprcomment.yml` provides a list of jobs and the respective message to be posted.
 The job names are ordered by priority.
 The first job that failed is used to determine the message to post.
+
+Exmple:
 
 ```yaml
 - jobName: job1
@@ -29,7 +31,12 @@ The first job that failed is used to determine the message to post.
     Please run "[Checkstyle](https://checkstyle.sourceforge.io/)" in your IDE and check for errors.
 ```
 
-Create a new GitHub workflow [`pr-comment.yml`](.github/workflows/pr-comment.yml):
+The full file is available at [`ghprcomment.yml`](ghprcomment.yml).
+
+### GitHub workflow
+
+One needs to create a GitHub workflow running within the repository context.
+For that, create a new GitHub workflow:
 
 ```yaml
 name: Comment on PR
@@ -81,6 +88,8 @@ jobs:
             GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+The full example is available at [`pr-comment.yml`](.github/workflows/pr-comment.yml).
+
 In the triggering workflow, you need to add a step to upload the pull request number:
 
 ```yaml
@@ -97,6 +106,8 @@ jobs:
           name: pr_number
           path: pr_number.txt
 ```
+
+The full example is available at [`check.yml`](.github/workflows/check.yml).
 
 ## Development setup
 
