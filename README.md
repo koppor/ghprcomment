@@ -89,6 +89,7 @@ jobs:
 ```
 
 The full example is available at [`pr-comment.yml`](.github/workflows/pr-comment.yml).
+Real world file: <https://github.com/JabRef/jabref/blob/main/.github/ghprcomment.yml>.
 
 In the triggering workflow, you need to add a step to upload the pull request number:
 
