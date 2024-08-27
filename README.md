@@ -5,7 +5,7 @@ Proudly made using [JBang](https://www.jbang.dev/).
 
 ## How to use
 
-### Defining the messages to be posted
+### Define the messages to be posted
 
 The `ghprcomment.yml` provides a list of jobs and the respective message to be posted.
 The job names are ordered by priority.
@@ -106,6 +106,8 @@ jobs:
           name: pr_number
           path: pr_number.txt
 ```
+
+The full example is available at [`check.yml`](.github/workflows/check.yml).
 
 ## Development setup
 
