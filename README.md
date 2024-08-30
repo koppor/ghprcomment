@@ -36,7 +36,8 @@ The full file is available at [`ghprcomment.yml`](ghprcomment.yml).
 ### GitHub workflow
 
 One needs to create a GitHub workflow running within the repository context.
-For that, create a new GitHub workflow:
+For that, create a new GitHub workflow triggered by the other workflow.
+You need to adapt a) the name of the triggering workflow (`Check` in the example) and b) the repository where it should be commented (`koppor/workflow-comment-test`) in the example.
 
 ```yaml
 name: Comment on PR
