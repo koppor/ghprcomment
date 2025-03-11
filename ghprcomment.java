@@ -52,6 +52,8 @@ public class ghprcomment implements Callable<Integer> {
 
     private final String CONFIG_FILE_NAME = "ghprcomment";
 
+    private final String MAGIC_COMMENT = "<!-- created by ghprcomment -->";
+
     private final List<Path> SEARCH_PATHS = List.of(Path.of("."), Path.of(".github"));
 
     private final List<Path> CONFIG_PATHS = SEARCH_PATHS.stream()
@@ -105,12 +107,24 @@ public class ghprcomment implements Callable<Integer> {
                                                                          .filter(fc -> failedJobs.contains(fc.jobName))
                                                                          .findFirst();
             Logger.debug("Found comment: {}", commentToPost);
-            commentToPost.ifPresent(Unchecked.consumer(comment -> pullRequest.createReview().event(GHPullRequestReviewEvent.COMMENT).body(comment.message).create()));
+            if (commentToPost.isPresent()) {
+                postComment(commentToPost.get().message, pullRequest);
+            }
         } catch (IllegalArgumentException e) {
             Logger.error("Error in repository reference {}", repository);
             return REPOSITORY_REFERENCE_ERROR;
         }
         return 0;
+    }
+
+    private void postComment(String message, GHPullRequest pullRequest) throws Exception {
+        pullRequest.getComments().forEach(Unchecked.consumer(comment -> {
+            if (comment.getBody().contains(MAGIC_COMMENT) || comment.getBody().equals(message)) {
+                comment.delete();
+            }
+        }));
+        String body = message + "\n\n" + MAGIC_COMMENT;
+        pullRequest.createReview().event(GHPullRequestReviewEvent.COMMENT).body(body).create();
     }
 
     private static List<FailureComment> getFailureComments(Path yamlFile) throws IOException {
