@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Unchecked;
+import org.kohsuke.github.GHIssueComment;
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHPullRequestReviewEvent;
 import org.kohsuke.github.GHRepository;
@@ -123,7 +124,11 @@ public class ghprcomment implements Callable<Integer> {
     /// This is a workaround for <https://github.com/hub4j/github-api/issues/2057
     ///
     private void bruteForceDeleteOldComments(GHPullRequest pullRequest, List<FailureComment> failureComments) throws Exception {
-        pullRequest.getComments().forEach(Unchecked.consumer(comment -> {
+        List<GHIssueComment> comments = pullRequest.getComments();
+        Logger.trace("Comment count: {}", comments.size());
+        Logger.trace("Comments:  {}", comments);
+        Logger.trace("failureComments:  {}", failureComments);
+        comments.forEach(Unchecked.consumer(comment -> {
             String body = comment.getBody();
             failureComments.stream()
                            .map(FailureComment::message)
