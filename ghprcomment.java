@@ -103,9 +103,11 @@ public class ghprcomment implements Callable<Integer> {
                                                 .map(GHWorkflowJob::getName)
                                                 .collect(Collectors.toSet());
             Logger.debug("Failed jobs: {}", failedJobs);
-            Optional<FailureComment> commentToPost = getFailureComments(configPath.get()).stream()
-                                                                         .filter(fc -> failedJobs.contains(fc.jobName))
-                                                                         .findFirst();
+            List<FailureComment> failureComments = getFailureComments(configPath.get());
+            bruteForceDeleteOldComments(pullRequest, failureComments);
+            Optional<FailureComment> commentToPost = failureComments.stream()
+                                                                    .filter(fc -> failedJobs.contains(fc.jobName))
+                                                                    .findFirst();
             Logger.debug("Found comment: {}", commentToPost);
             if (commentToPost.isPresent()) {
                 postComment(commentToPost.get().message, pullRequest);
@@ -115,6 +117,22 @@ public class ghprcomment implements Callable<Integer> {
             return REPOSITORY_REFERENCE_ERROR;
         }
         return 0;
+    }
+
+    ///
+    /// This is a workaround for <https://github.com/hub4j/github-api/issues/2057
+    ///
+    private void bruteForceDeleteOldComments(GHPullRequest pullRequest, List<FailureComment> failureComments) throws Exception {
+        pullRequest.getComments().forEach(Unchecked.consumer(comment -> {
+            String body = comment.getBody();
+            failureComments.stream()
+                           .map(FailureComment::message)
+                           .filter(body::contains)
+                           .forEach(Unchecked.consumer(fc -> {
+                               Logger.debug("Found a match - deleting {}", comment.getId());
+                               comment.delete();
+                           }));
+        }));
     }
 
     private void postComment(String message, GHPullRequest pullRequest) throws Exception {
