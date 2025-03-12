@@ -30,13 +30,11 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Unchecked;
 import org.kohsuke.github.GHIssueComment;
 import org.kohsuke.github.GHPullRequest;
-import org.kohsuke.github.GHPullRequestReview;
 import org.kohsuke.github.GHPullRequestReviewEvent;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHWorkflowJob;
 import org.kohsuke.github.GHWorkflowRun;
 import org.kohsuke.github.GitHub;
-import org.kohsuke.github.PagedIterator;
 import org.tinylog.Logger;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -108,7 +106,7 @@ public class ghprcomment implements Callable<Integer> {
                                                 .collect(Collectors.toSet());
             Logger.debug("Failed jobs: {}", failedJobs);
             List<FailureComment> failureComments = getFailureComments(configPath.get());
-            bruteForceDeleteOldReviews(pullRequest);
+            bruteForceDeleteOldComments(pullRequest, failureComments);
             Optional<FailureComment> commentToPost = failureComments.stream()
                                                                     .filter(fc -> failedJobs.contains(fc.jobName))
                                                                     .findFirst();
@@ -123,19 +121,37 @@ public class ghprcomment implements Callable<Integer> {
         return 0;
     }
 
-    private void bruteForceDeleteOldReviews(GHPullRequest pullRequest) throws Exception {
-        PagedIterator<GHPullRequestReview> iterator = pullRequest.listReviews().iterator();
-        while (iterator.hasNext()) {
-            GHPullRequestReview review = iterator.next();
-            if (review.getUser().getName().equals("github-actions[bot]")) {
-                Logger.debug("Deleting review {}", review.getId());
-                review.dismiss("outdated");
-            }
-        }
+    ///
+    /// This is a workaround for <https://github.com/hub4j/github-api/issues/2057>, but not <https://github.com/hub4j/github-api/issues/2058>
+    ///
+    private void bruteForceDeleteOldComments(GHPullRequest pullRequest, List<FailureComment> failureComments) throws Exception {
+        List<GHIssueComment> comments = pullRequest.getComments();
+        Logger.trace("Comment count: {}", comments.size());
+        Logger.trace("Comments:  {}", comments);
+        Logger.trace("failureComments:  {}", failureComments);
+        comments.forEach(Unchecked.consumer(comment -> {
+            String body = comment.getBody();
+            failureComments.stream()
+                           .map(FailureComment::message)
+                           .filter(body::contains)
+                           .forEach(Unchecked.consumer(fc -> {
+                               Logger.debug("Found a match - deleting {}", comment.getId());
+                               comment.delete();
+                           }));
+        }));
     }
 
     private void postComment(String message, GHPullRequest pullRequest) throws Exception {
         Logger.trace("message: {}", message);
+
+        pullRequest.getComments().forEach(Unchecked.consumer(comment -> {
+            String body = comment.getBody();
+            Logger.trace("Comment body: {}", body);
+            if (body.contains(MAGIC_COMMENT) || body.equals(message)) {
+                Logger.debug("Found a match - deleting {}", comment.getId());
+                comment.delete();
+            }
+        }));
         String body = message + "\n\n" + MAGIC_COMMENT;
         Logger.trace("Creating review...", body);
         pullRequest.createReview().event(GHPullRequestReviewEvent.COMMENT).body(body).create();
