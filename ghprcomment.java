@@ -153,8 +153,8 @@ public class ghprcomment implements Callable<Integer> {
             }
         }));
         String body = message + "\n\n" + MAGIC_COMMENT;
-        Logger.trace("Creating review...", body);
-        pullRequest.createReview().event(GHPullRequestReviewEvent.COMMENT).body(body).create();
+        Logger.trace("Creating PR comment...", body);
+        pullRequest.comment(body);
     }
 
     private static List<FailureComment> getFailureComments(Path yamlFile) throws IOException {
