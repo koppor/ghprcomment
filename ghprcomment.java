@@ -118,12 +118,18 @@ public class ghprcomment implements Callable<Integer> {
     }
 
     private void postComment(String message, GHPullRequest pullRequest) throws Exception {
+        Logger.trace("message: {}", message);
+
         pullRequest.getComments().forEach(Unchecked.consumer(comment -> {
-            if (comment.getBody().contains(MAGIC_COMMENT) || comment.getBody().equals(message)) {
+            String body = comment.getBody();
+            Logger.trace("Comment body: {}", body);
+            if (body.contains(MAGIC_COMMENT) || body.equals(message)) {
+                Logger.debug("Found a match - deleting {}", comment.getId());
                 comment.delete();
             }
         }));
         String body = message + "\n\n" + MAGIC_COMMENT;
+        Logger.trace("Creating review...", body);
         pullRequest.createReview().event(GHPullRequestReviewEvent.COMMENT).body(body).create();
     }
 
