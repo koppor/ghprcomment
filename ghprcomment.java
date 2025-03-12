@@ -122,7 +122,7 @@ public class ghprcomment implements Callable<Integer> {
     }
 
     ///
-    /// This is a workaround for <https://github.com/hub4j/github-api/issues/2057
+    /// This is a workaround for <https://github.com/hub4j/github-api/issues/2057>, but not <https://github.com/hub4j/github-api/issues/2058>
     ///
     private void bruteForceDeleteOldComments(GHPullRequest pullRequest, List<FailureComment> failureComments) throws Exception {
         List<GHIssueComment> comments = pullRequest.getComments();
