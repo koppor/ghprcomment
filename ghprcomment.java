@@ -8,7 +8,7 @@
 //DEPS org.jline:jline-terminal:3.29.0
 //DEPS org.eclipse.collections:eclipse-collections:11.1.0
 //DEPS info.picocli:picocli:4.7.6
-//DEPS org.yaml:snakeyaml:2.2
+//DEPS org.yaml:snakeyaml:2.4
 //DEPS org.jooq:jool:0.9.15
 //DEPS org.tinylog:tinylog-api:2.7.0
 //DEPS org.tinylog:tinylog-impl:2.7.0
