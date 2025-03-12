@@ -96,6 +96,7 @@ public class ghprcomment implements Callable<Integer> {
             gitHubRepository = gitHub.getRepository(repository);
 
             // We fetch the pull request early to ensure that the number is valid
+            Logger.debug("Pull Request number: {}", pullRequestNumber);
             GHPullRequest pullRequest = gitHubRepository.getPullRequest(pullRequestNumber);
 
             GHWorkflowRun workflowRun = gitHubRepository.getWorkflowRun(workflowRunId);
