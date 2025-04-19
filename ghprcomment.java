@@ -7,7 +7,7 @@
 //DEPS me.tongfei:progressbar:0.10.1
 //DEPS org.jline:jline-terminal:3.29.0
 //DEPS org.eclipse.collections:eclipse-collections:11.1.0
-//DEPS info.picocli:picocli:4.7.6
+//DEPS info.picocli:picocli:4.7.7
 //DEPS org.yaml:snakeyaml:2.4
 //DEPS org.jooq:jool:0.9.15
 //DEPS org.tinylog:tinylog-api:2.7.0
