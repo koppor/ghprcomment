@@ -36,7 +36,7 @@ jobs:
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
       - name: Checkout
         if: ${{ steps.read-pr_number.outputs.pr_number != '' }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: '0'
           show-progress: 'false'
