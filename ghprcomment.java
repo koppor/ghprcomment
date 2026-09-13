@@ -11,7 +11,7 @@
 //DEPS org.yaml:snakeyaml:2.7
 //DEPS org.jooq:jool:0.9.15
 //DEPS org.tinylog:tinylog-api:2.7.0
-//DEPS org.tinylog:tinylog-impl:2.7.0
+//DEPS org.tinylog:tinylog-impl:2.8.0
 //DEPS org.tinylog:slf4j-tinylog:2.7.0 // because of jgit
 //FILES tinylog.properties
 
