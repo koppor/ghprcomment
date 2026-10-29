@@ -9,7 +9,7 @@
 //DEPS org.eclipse.collections:eclipse-collections:13.0.0
 //DEPS info.picocli:picocli:4.7.7
 //DEPS org.yaml:snakeyaml:2.7
-//DEPS org.jooq:jool:0.9.15
+//DEPS org.jooq:jool:0.9.16
 //DEPS org.tinylog:tinylog-api:2.8.1
 //DEPS org.tinylog:tinylog-impl:2.8.1
 //DEPS org.tinylog:slf4j-tinylog:2.8.1 // because of jgit
